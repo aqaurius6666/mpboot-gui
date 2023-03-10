@@ -6,6 +6,7 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import "./App.css";
 import { useWindowSize } from 'usehooks-ts';
 import { useElectron } from './hooks/useElectron';
+import { ExposedElectron, unimplementedExposedElectron } from '../../common/electron';
 // import { DashboardPage } from './pages/dashboard';
 
 const MainPage = lazy(() => import('./pages/main').then((module) => ({ default: module.MainPage })));

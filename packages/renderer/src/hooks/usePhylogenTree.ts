@@ -6,27 +6,22 @@ import type { RootState } from '../redux/store/root';
 import { useElectron } from './useElectron';
 
 const initialUsePhylogenTree = (): [
-  newick: string,
   setNewick: (str: string) => void,
   subscribeCommand: (id: string) => void,
 ] => {
-  return [
-    '',
-    (_str: string) => {
-      return;
-    },
-    (_id: string) => {
-      return;
-    },
-  ];
+  const setNewick = (_str: string) => {
+    return;
+  }
+  const subscribeCommand = (_id: string) => {
+    return;
+  }
+  return [setNewick, subscribeCommand];
 };
 
 const usePhylogenTreeImpl = (): [
-  newick: string,
   setNewick: (str: string) => void,
   subscribeCommand: (id: string) => void,
 ] => {
-  const phylogenTree = useSelector((state: RootState) => state.phylogenTree);
   const dispatch = useDispatch();
   const electron = useElectron();
 
@@ -34,7 +29,6 @@ const usePhylogenTreeImpl = (): [
     dispatch(Actions.setNewick(newick));
   }, []);
 
-  const newick = useMemo(() => phylogenTree.newick, [phylogenTree]);
 
   const subscribeCommand = useCallback(
     (commandId: string) => {
@@ -44,10 +38,10 @@ const usePhylogenTreeImpl = (): [
         commandStream.unsubscribe();
       });
     },
-    [electron],
+    [],
   );
 
-  return [newick, setNewick, subscribeCommand];
+  return [setNewick, subscribeCommand];
 };
 
-export const usePhylogenTree = singletonHook(initialUsePhylogenTree, usePhylogenTreeImpl);
+export const usePhylogenTree = usePhylogenTreeImpl;

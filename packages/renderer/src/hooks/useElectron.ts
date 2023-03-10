@@ -1,22 +1,14 @@
-import { useDebugValue, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { singletonHook } from 'react-singleton-hook';
-import type { ExposedElectron } from '../../../common/electron';
 import { unimplementedExposedElectron } from '../../../common/electron';
 import type { ContextMenuType } from '../../../common/menu';
 
 export const useElectronImpl = () => {
-  const [electron, setElectron] = useState<ExposedElectron>(unimplementedExposedElectron);
-
-  useDebugValue(electron === unimplementedExposedElectron ? 'not ready' : 'ready')
-
-  useMemo(() => {
-    if (window) {
-      setElectron(() => window.electron);
-    }
-  }, [window]);
+  const electron = useMemo(() => {
+    return window.electron;
+  }, []);
 
   useEffect(() => {
-    if (!electron || !window) return;
     const listener = (e: MouseEvent) => {
       e.preventDefault();
       if (!e.target) return;
@@ -35,8 +27,10 @@ export const useElectronImpl = () => {
     return () => {
       window.removeEventListener('contextmenu', listener);
     };
-  }, [electron, window]);
+  }, []);
+
   return electron;
 };
 
 export const useElectron = singletonHook(unimplementedExposedElectron, useElectronImpl);
+// export const useElectron = useElectronImpl;

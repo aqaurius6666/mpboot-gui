@@ -6,7 +6,7 @@ import { useWorkspace } from '../hooks/useWorkspace'
 
 export const DashboardPage = () => {
     const electron = useElectron()
-    const [, , setWorkspace] = useWorkspace()
+    const [, setWorkspace] = useWorkspace()
     const navigate = useNavigate()
     const [workspaces, setWorkspaces] = useState<IWorkspace[]>([])
     

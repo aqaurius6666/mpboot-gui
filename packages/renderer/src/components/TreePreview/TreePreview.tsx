@@ -3,6 +3,8 @@ import "./TreePreview.css";
 import { usePhylogenTree } from '../../hooks/usePhylogenTree';
 // @ts-ignore
 import * as phylotree from 'phylotree';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store/root';
 
 export interface TreePreviewProps {
     newick?: string,
@@ -19,18 +21,18 @@ export interface TreePreviewWithSizeProps {
 
 
 export const TreePreview: FC<TreePreviewProps> = ({ width, height, mode = "normal" }) => {
-    const [newick] = usePhylogenTree()
+    const { newick } = useSelector((state: RootState) => state.phylogenTree)
     const [treeRenderHtml, setTreeRenderHtml] = React.useState('<div></div>')
     useEffect(() => {
-        if(!newick) return
+        if (!newick) return
         const _tree = new phylotree.phylotree(newick);
-        const renderOptions : any = {
+        const renderOptions: any = {
             width: width,
             height: height,
             container: "#tree-container",
-            'left-right-spacing': 'fit-to-size', 
+            'left-right-spacing': 'fit-to-size',
             'top-bottom-spacing': 'fit-to-size',
-            'align-tips' : true,
+            'align-tips': true,
         }
         if (mode === "radial") {
             _tree.render(renderOptions)
@@ -54,18 +56,18 @@ export const TreePreview: FC<TreePreviewProps> = ({ width, height, mode = "norma
     }
     return (
         <>
-        <div dangerouslySetInnerHTML={{ __html: treeRenderHtml }} id="tree-container"></div>
+            <div dangerouslySetInnerHTML={{ __html: treeRenderHtml }} id="tree-container"></div>
         </>
-    
+
     )
 }
 
 
-export const TreePreviewWithSize : FC<TreePreviewWithSizeProps> = ({ mode, height, width}) => {
+export const TreePreviewWithSize: FC<TreePreviewWithSizeProps> = ({ mode, height, width }) => {
     const ref = useRef<HTMLDivElement>(null);
-  
+
     return (
-        <div ref={ref} style={{width: width, height: height}}>
+        <div ref={ref} style={{ width: width, height: height }}>
             <TreePreview width={ref.current?.offsetWidth} height={ref.current?.offsetHeight} mode={mode} />
         </div>
     )

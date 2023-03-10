@@ -3,15 +3,14 @@ import { useContentView } from '../../hooks/useContentView';
 import { PhyRenderedContent } from './PhyRenderedContent';
 import { TxtRenderedContent } from './TxtRenderedContent';
 import "./ContentView.css"
+import { RootState } from '../../redux/store/root';
+import { useSelector } from 'react-redux';
 
 export const ContentView = () => {
-    const [contentFile,] = useContentView();
-
+    const contentFile = useSelector((state: RootState) => state.contentFile)
     const memoContent = useMemo(() => {
         return contentFile.content
     }, [contentFile])
-    
-
 
     const renderComponent = useMemo(() => {
         if (!memoContent) {

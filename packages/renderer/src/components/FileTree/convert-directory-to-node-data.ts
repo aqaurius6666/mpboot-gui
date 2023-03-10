@@ -36,7 +36,3 @@ export const findNodeDataAndUpdate = (
     findNodeDataAndUpdate(child, path, callback);
   });
 };
-
-export const getRelativePath = (rootPath: string, path: string) => {
-  return path.replace(rootPath, '').slice(1);
-};

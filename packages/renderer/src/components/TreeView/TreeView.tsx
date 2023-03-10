@@ -6,6 +6,8 @@ import "./phylotree.css";
 import { usePhylogenTree } from '../../hooks/usePhylogenTree';
 import { logger } from '../../../../common/logger';
 import { PhylotreeVisualization } from 'phylotree-visualization-demo';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store/root';
 
 export interface TreeViewProps {
     newick?: string,
@@ -22,7 +24,7 @@ export interface TreeViewWithSizeProps {
 
 
 export const TreeView: FC<TreeViewProps> = ({ width, height, mode = "normal" }) => {
-    const [newick] = usePhylogenTree()
+    const { newick } = useSelector((state: RootState) => state.phylogenTree)
 
     return (
         <PhylotreeVisualization 
