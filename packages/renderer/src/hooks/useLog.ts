@@ -28,7 +28,7 @@ const useLogImpl = (): [
   /**
    * Render whenever log file changes
    */
-  const subscribeLog = useCallback((logFile : string) => {
+  const subscribeLog = useCallback((logFile: string) => {
     const logStream = electron.subscribeLog(logFile);
     dispatch(
       Actions.appendLogData({
@@ -77,9 +77,9 @@ const useLogImpl = (): [
   //   };
   // }, [logState.logFile, counter]);
 
-  const reloadLog = useCallback((logFile : string) => {
+  const reloadLog = useCallback((logFile: string) => {
     electron.unsubscribeLog(logFile);
-    subscribeLog(logFile)
+    subscribeLog(logFile);
   }, []);
 
   return [subscribeLog, reloadLog];

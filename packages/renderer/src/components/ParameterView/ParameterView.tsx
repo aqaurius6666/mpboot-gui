@@ -7,8 +7,8 @@ import { RootState } from '../../redux/store/root';
 import { getRelativePath } from '../../utils/fs';
 
 export const ParameterView = () => {
-    const  parameter = useSelector((state: RootState) => state.parameter)
-    const  {dirPath} = useSelector((state: RootState) => state.workspace)
+    const parameter = useSelector((state: RootState) => state.parameter)
+    const { dirPath } = useSelector((state: RootState) => state.workspace)
     const [subscribeLog] = useLog();
     const [, subscribeCommand] = usePhylogenTree()
     const electron = useElectron()
@@ -17,7 +17,6 @@ export const ParameterView = () => {
         e.preventDefault();
         (async () => {
             const { logFile, commandId } = await electron.executeCommand(parameter)
-            debugger
             subscribeLog(logFile)
             subscribeCommand(commandId)
         })()

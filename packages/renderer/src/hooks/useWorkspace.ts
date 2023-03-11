@@ -8,15 +8,11 @@ export const useWorkspace = (): [
   setWorkspace: (ws: IWorkspace) => void,
 ] => {
   const dispatch = useDispatch();
-  
 
-  const getRelativePath = useCallback(
-    (path: string, wsPath : string) => {
-      const relativePath = path.replace(wsPath, '.');
-      return relativePath;
-    },
-    [],
-  );
+  const getRelativePath = useCallback((path: string, wsPath: string) => {
+    const relativePath = path.replace(wsPath, '.');
+    return relativePath;
+  }, []);
 
   const setWorkspace = useCallback((ws: IWorkspace) => {
     dispatch(ContentFileAction.clear());

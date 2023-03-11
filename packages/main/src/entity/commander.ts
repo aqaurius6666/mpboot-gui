@@ -28,6 +28,11 @@ export class Commander {
 
   public async execute(onFinish: (exitCode?: number | null) => void): Promise<ExecuteResult> {
     const logFileName = join(tmpdir(), `mpbootgui-${Date.now()}.log`);
+    logger.debug('Execute info', {
+      binary: this.binary,
+      args: this.args,
+      logFileName,
+    });
     await writeFile(logFileName, '');
     const logStream = createWriteStream(logFileName, { flags: 'a+' });
     const ls = spawn(this.binary, this.args, {

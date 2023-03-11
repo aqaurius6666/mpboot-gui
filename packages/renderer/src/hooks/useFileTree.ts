@@ -1,4 +1,4 @@
-import { MouseEventHandler } from 'react';
+import type { MouseEventHandler } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import type { NodeData } from 'react-folder-tree';
 import type { Directory, DirectoryTreeEvent } from '../../../common/directory-tree';
@@ -12,36 +12,8 @@ import { useElectron } from './useElectron';
 import { useParameter } from './useParameter';
 import { findTargetNode } from 'use-tree-state';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store/root';
+import type { RootState } from '../redux/store/root';
 import { getRelativePath } from '../utils/fs';
-
-const unimplementedUseFileTree = (): [
-  nodeData: NodeData | undefined,
-  onTreeStateChange: (state: any, event: any) => void,
-  onNameClick: ({
-    defaultOnClick,
-    nodeData,
-  }: {
-    defaultOnClick: () => void;
-    nodeData: NodeData;
-  }) => void,
-  onContextMenu: MouseEventHandler<HTMLElement>,
-] => {
-  return [
-    {} as NodeData,
-    (_state: any, _event: any) => {
-      return;
-    },
-    ({ defaultOnClick, nodeData }: { defaultOnClick: () => void; nodeData: NodeData }) => {
-      defaultOnClick();
-      const _ = nodeData;
-      return;
-    },
-    (_event: any) => {
-      return;
-    },
-  ];
-};
 
 const useFileTreeImpl = (): [
   nodeData: NodeData | undefined,
@@ -62,24 +34,11 @@ const useFileTreeImpl = (): [
   const [nodeData, setNodeData] = useState<NodeData>();
 
   useEffect(() => {
-    if (!dirPath) return;
-    const emitter = electron.subscribeDirectoryTree(dirPath);
-    emitter.on('data', (events: DirectoryTreeEvent[]) => {
-      onDirectoryTreeEvents(events);
-    });
-    return () => {
-      emitter.unregister();
-    };
-  }, [dirPath, electron]);
-
-  useEffect(() => {
     (async () => {
-      if (!electron) return;
-
       const directory = await electron.getFirstLoadDirectoryTree(dirPath);
       setNodeData(convertDirectoryToNodeData(directory));
     })();
-  }, [electron, dirPath]);
+  }, [dirPath]);
 
   const onDirectoryTreeEvents = useCallback(
     (events: DirectoryTreeEvent[]) => {
@@ -102,13 +61,13 @@ const useFileTreeImpl = (): [
               isOpen: false,
               ...(event.isDirectory
                 ? {
-                  children: [],
-                  type: 'directory',
-                  explored: false,
-                }
+                    children: [],
+                    type: 'directory',
+                    explored: false,
+                  }
                 : {
-                  type: 'file',
-                }),
+                    type: 'file',
+                  }),
             };
             _children.push(nodeToPush);
             _children.sort((a, b) => {
@@ -148,8 +107,19 @@ const useFileTreeImpl = (): [
         setNodeData(_tmp);
       }
     },
-    [JSON.stringify(nodeData), electron],
+    [JSON.stringify(nodeData)],
   );
+
+  useEffect(() => {
+    if (!dirPath) return;
+    const emitter = electron.subscribeDirectoryTree(dirPath);
+    emitter.on('data', (events: DirectoryTreeEvent[]) => {
+      onDirectoryTreeEvents(events);
+    });
+    return () => {
+      emitter.unregister();
+    };
+  }, [dirPath, onDirectoryTreeEvents]);
 
   const onTreeStateChange = useCallback((state: any, event: any) => {
     logger.log('state change', { state, event });
@@ -191,7 +161,7 @@ const useFileTreeImpl = (): [
       }
       defaultOnClick();
     },
-    [JSON.stringify(nodeData), electron, dirPath],
+    [JSON.stringify(nodeData), dirPath],
   );
 
   const onContextMenu: MouseEventHandler<HTMLElement> = useCallback(
@@ -208,7 +178,7 @@ const useFileTreeImpl = (): [
         data: node.id,
       });
     },
-    [nodeData],
+    [JSON.stringify(nodeData)],
   );
 
   return [nodeData, onTreeStateChange, onNameClick, onContextMenu];

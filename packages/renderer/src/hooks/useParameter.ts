@@ -6,8 +6,8 @@ export const useParameter = (): [(source: string) => void] => {
   const dispatch = useDispatch();
 
   const setSource = useCallback((source: string) => {
-      dispatch(Actions.setParameter({ source }));
-    }, []);
+    dispatch(Actions.setParameter({ source }));
+  }, []);
 
   return [setSource];
 };

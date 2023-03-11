@@ -4,46 +4,70 @@ export interface Logger {
   warn(message: string, context?: any): void;
   debug(message: string, context?: any): void;
 }
-export class ConsoleLogger implements Logger {
-  private boundary = '-------------------------------------';
+export enum LogLevel {
+  DEBUG = 0,
+  INFO = 1,
+  WARN = 2,
+  ERROR = 3,
+}
 
+export const LogLevelToString = {
+  [LogLevel.DEBUG]: 'DEBUG',
+  [LogLevel.INFO]: 'INFO',
+  [LogLevel.WARN]: 'WARN',
+  [LogLevel.ERROR]: 'ERROR',
+};
+
+export class ConsoleLogger implements Logger {
+  private level: LogLevel;
+
+  constructor(level: LogLevel) {
+    this.level = level;
+  }
+  private formatMessage(logLevel: LogLevel, message: string): string {
+    return `${new Date().toISOString()} [${LogLevelToString[logLevel]}]: ${message}`;
+  }
   debug(message: string, context?: any): void {
-    console.debug(this.boundary);
-    if (context) {
-      console.debug(message, { context });
-    } else {
-      console.debug(message);
+    if (this.level > LogLevel.DEBUG) {
+      return;
     }
-    console.debug(this.boundary);
+    if (context) {
+      console.debug(this.formatMessage(LogLevel.DEBUG, message), { context });
+    } else {
+      console.debug(this.formatMessage(LogLevel.DEBUG, message));
+    }
   }
 
   log(message: string, context?: any): void {
-    console.log(this.boundary);
-    if (context) {
-      console.log(message, { context });
-    } else {
-      console.log(message);
+    if (this.level > LogLevel.INFO) {
+      return;
     }
-    console.log(this.boundary);
+    if (context) {
+      console.log(this.formatMessage(LogLevel.INFO, message), { context });
+    } else {
+      console.log(this.formatMessage(LogLevel.INFO, message));
+    }
   }
   error(message: string, err?: Error): void {
-    console.error(this.boundary);
-    if (err) {
-      console.error(message, { err });
-    } else {
-      console.error(message);
+    if (this.level > LogLevel.ERROR) {
+      return;
     }
-    console.error(this.boundary);
+    if (err) {
+      console.error(this.formatMessage(LogLevel.ERROR, message), { err });
+    } else {
+      console.error(this.formatMessage(LogLevel.ERROR, message));
+    }
   }
   warn(message: string, context?: any): void {
-    console.warn(this.boundary);
-    if (context) {
-      console.warn(message, { context });
-    } else {
-      console.warn(message);
+    if (this.level > LogLevel.WARN) {
+      return;
     }
-    console.warn(this.boundary);
+    if (context) {
+      console.warn(this.formatMessage(LogLevel.WARN, message), { context });
+    } else {
+      console.warn(this.formatMessage(LogLevel.WARN, message));
+    }
   }
 }
 
-export const logger: Logger = new ConsoleLogger();
+export const logger: Logger = new ConsoleLogger(LogLevel.DEBUG);
