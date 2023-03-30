@@ -6,7 +6,7 @@ import './ipc';
 import './repository/repository';
 import './menu';
 import { logger } from '../../common/logger';
-import { isDevEnv } from './const';
+import { isDevEnv, isEnableTracing } from './const';
 
 logger.log("You're running in development mode?", { isDevEnv: isDevEnv });
 /**
@@ -58,6 +58,26 @@ if (isDevEnv) {
       installExtension(REACT_DEVELOPER_TOOLS),
     )
     .catch(e => console.error('Failed install extension:', e));
+}
+
+// Setup tracing
+if (isEnableTracing) {
+  const categories = ['electron']
+  app.whenReady().then(() => {
+    (async () => {
+      const { contentTracing } = await import('electron')
+      await contentTracing.startRecording({
+        included_categories: categories,
+      })
+      logger.debug('Tracing started')
+
+    })()
+  })
+  app.on('window-all-closed', async () => {
+    const { contentTracing } = await import('electron')
+    const path = await contentTracing.stopRecording()
+    logger.debug('Tracing stopped', { path })
+  })
 }
 
 /**

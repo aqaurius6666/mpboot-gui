@@ -10,4 +10,5 @@ export const pageUrl =
     : new URL('../renderer/dist/index.html', 'file://' + __dirname).toString();
 
 export const isDevEnv = import.meta.env.DEV;
+export const isEnableTracing = isDevEnv && import.meta.env.VITE_ENABLE_TRACING;
 export const isMac = process.platform === 'darwin';
